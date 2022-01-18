@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: swamp_water_tess 1
+  m_Shader: {fileID: 4800000, guid: c7529d2476b539b4d9ab85cd3d34b08e, type: 3}
+  m_ShaderKeywords: _FLOWMAP_DISABLED _TESS_TRIS _TYPE_FLIPBOOK
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpArray:
+        m_Texture: {fileID: 18700000, guid: a8c438561072d124da8228cedc01ac9d, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OffsetArray:
+        m_Texture: {fileID: 18700000, guid: f9e27b340e9c5194199078a54772ec10, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ArrayLen: 16
+    - _BumpArrayFR: 8
+    - _BumpScale: 0.035
+    - _BumpScale2: 0.521
+    - _Cutoff: 0.5
+    - _DepthFade: 0.1
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _Flowmap: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _MaxSteps: 100
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _OffsetScaleH: 0.2
+    - _OffsetScaleV: 0.1
+    - _Parallax: 0.02
+    - _Power: 0.2
+    - _ReflectionStr: 1
+    - _Refraction: 1.333
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _Tess: 0
+    - _TessFac: 16
+    - _TessMax: 8
+    - _Type: 0
+    - _UVSec: 0
+    - _ZWrite: 1
+    - _alpha: 1
+    - _blur: 3
+    - _edgeFade: 0.1
+    - _flowSpeed: 8
+    - _fogDepth: 1
+    - _lrad: 0.2
+    - _rtint: 0
+    - _srad: 0.02
+    - _step: 0.09
+    m_Colors:
+    - _BaseColor: {r: 1, g: 0.96915823, b: 0.9198113, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DepthColor: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

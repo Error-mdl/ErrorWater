@@ -1,0 +1,1 @@
+Remove the underscore from .blend_ to open with blender. I did this so unity doesn't try to import a 1/3rd of a million poly water mesh.

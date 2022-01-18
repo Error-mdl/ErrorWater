@@ -1,0 +1,4 @@
+*.asset filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.blend_ filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,3 @@
+[submodule "ForwardSSR"]
+	path = ForwardSSR
+	url = https://github.com/Error-mdl/ForwardSSR.git
