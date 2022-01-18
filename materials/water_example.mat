@@ -21,7 +21,7 @@ Material:
     m_TexEnvs:
     - _BumpArray:
         m_Texture: {fileID: 18700000, guid: a8c438561072d124da8228cedc01ac9d, type: 2}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 9cb90153d0b0d354f97ac678559b790c, type: 3}
@@ -48,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FlowMap:
-        m_Texture: {fileID: 2800000, guid: 2548e5cefaa649449a9a04be8eef6348, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -83,8 +83,8 @@ Material:
     - _AlphaPower: 1
     - _ArrayLen: 16
     - _BumpArrayFR: 8
-    - _BumpScale: 0.399
-    - _BumpScale2: 0.951
+    - _BumpScale: 0.18
+    - _BumpScale2: 0.276
     - _CubeStr: 0.243
     - _Cutoff: 0.5
     - _DepthFade: 0.23
@@ -98,11 +98,11 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OffsetScaleH: 0.025
-    - _OffsetScaleV: 0.05
+    - _OffsetScaleH: 0.2
+    - _OffsetScaleV: 0.2
     - _Parallax: 0.02
-    - _Power: 0.41
-    - _ReflectionStr: 0.02
+    - _Power: 0.45
+    - _ReflectionStr: 0.107
     - _Refraction: 1.15
     - _ScrollU: -2.72
     - _ScrollV: -1.16
@@ -110,8 +110,8 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Tess: 0
-    - _TessFac: 8
-    - _TessMax: 8
+    - _TessFac: 16
+    - _TessMax: 16
     - _Type: 0
     - _UVSec: 0
     - _ZWrite: 1
@@ -119,13 +119,13 @@ Material:
     - _blur: 0
     - _edgeFade: 0.1
     - _flowSpeed: 1
-    - _fogDepth: 2.93
+    - _fogDepth: 0.5
     - _lrad: 0.4
     - _rtint: 0
     - _srad: 0.04
     - _step: 0.18
     m_Colors:
-    - _BaseColor: {r: 0.9292453, g: 0.9905552, b: 1, a: 1}
+    - _BaseColor: {r: 0.8537736, g: 0.9837526, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DepthColor: {r: 0.367791, g: 0.5094117, b: 0.5377358, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
