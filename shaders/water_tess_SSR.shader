@@ -71,6 +71,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 			#pragma multi_compile_local _FLOWMAP_ENABLED _FLOWMAP_DISABLED
 			#pragma multi_compile_local _TESS_TRIS _TESS_QUADS
 			#pragma multi_compile _ SOFTPARTICLES_ON
+			#pragma multi_compile_fog
 
 			#pragma vertex TessVert
 			#pragma hull MHullProgram
@@ -94,6 +95,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				float2 uv1 : TEXCOORD1;
 				float2 uv2 : TEXCOORD2;
 				float2 uvToObj : TEXCOORD3;
+
 				float3 normal : NORMAL;
 				float4 tangent : TANGENT;
 				float4 color: COLOR;
@@ -106,6 +108,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				float3 uv2 : TEXCOORD1; // xy is uv2, w is tspace.z;
 				float4 tspace0 : TEXCOORD2; // xyz is tspace0, w is tspace2.x 
 				float4 tspace1 : TEXCOORD3; // xyz is tspace1, w is tspace2.y 
+				UNITY_FOG_COORDS(4)
 				float4 wPos : TEXCOORD5;
 				float4 vColor : COLOR;
 			};
@@ -202,6 +205,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				o.uv2.xy = v.uv2;
 				o.uv2.z = wNormal.z;
 				o.vertex = UnityObjectToClipPos(v.vertex);
+				UNITY_TRANSFER_FOG(o, o.vertex);
 				o.wPos = mul(unity_ObjectToWorld, v.vertex);
 				o.vColor = v.color;
 				return o;
@@ -337,6 +341,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 					output = cubemap;
 				}
 				//output = float4(frac(i.uv0.xy*10),0,1);
+				UNITY_APPLY_FOG(i.fogCoord, output);
 				return output;
 			}
 			ENDCG
