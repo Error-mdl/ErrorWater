@@ -79,6 +79,8 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 
 			#pragma fragment frag
 			#pragma target 5.0
+
+			#define TESSELATION_VARIANT
 		
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -87,7 +89,9 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 			#include "../ForwardSSR/shaders/SSR.cginc"
 			#include "cginc/water_samplers.cginc"
 			
+			#include "cginc/water_structs.cginc"
 		
+			/*
 			struct VertIn
 			{
 				float4 vertex : POSITION;
@@ -112,6 +116,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				float4 wPos : TEXCOORD5;
 				float4 vColor : COLOR;
 			};
+			*/
 		
 			//sampler2D _MainTex;
 			//float4 _MainTex_ST;
@@ -195,7 +200,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				FBSampleLevel(rawOffset, _OffsetArray, sampler_OffsetArray, uvArray, _ArrayLen, _BumpArrayFR);
 #endif
 
-				v.vertex.xyz += rawOffset.z * v.normal * _OffsetScaleV *v.color.r;
+				v.vertex.xyz += (rawOffset.z - 0.5) * v.normal * _OffsetScaleV *v.color.r;
 				v.vertex.xyz -= (rawOffset.x * normalize(v.tangent.xyz) / _BumpArray_ST.x + rawOffset.y * normalize(bitangent) / _BumpArray_ST.y) * _OffsetScaleH * v.color.r;
 				v.uv -= rawOffset.xy * _OffsetScaleH / (_BumpArray_ST.xy * v.uvToObj) * v.color.r;
 
