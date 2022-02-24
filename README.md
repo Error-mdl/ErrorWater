@@ -5,3 +5,6 @@ An incomplete water shader written for unity's built-in render pipline developed
 - Add PBR lighting calculations (currently only uses probes and SSR for reflections)
 - Add different varaiants without tesselation for AMD users
 - Possibly add features for more ocean like water like foam and procedural waves
+
+# WARNING
+This repo uses git LFS for the textures, and git submodules for the SSR. Attempting to download the code through the github page will give empty dummy files for the textures and not include the SSR repo's code. You must either download a release or clone the repo with git.
