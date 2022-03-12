@@ -6,6 +6,7 @@
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 
+#include "../../ForwardSSR/shaders/ScreenspaceMacros.cginc"
 
 /** @brief Returns the distance between a given point and the worldspace position calculated from the depth
  *         read from the depth texture at the given screen UVs.
@@ -119,7 +120,7 @@ float4 getRefractedUVs(float4 offsetPos, float4 wPos)
     return float4(UV, UV1);
 }
 
-float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float facing, const sampler2D GrabPass)
+float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float facing, PARAM_SCREENSPACE_TEXTURE(GrabPass))
 {
     float4 UVs = getRefractedUVs(offsetPos, wPos);
     float2 UV = UVs.xy;
@@ -136,7 +137,7 @@ float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float fac
     float FrontFade = 0.0;
 #endif
     //FrontFade = sqrt(FrontFade);
-    float4 finalColor = tex2D(GrabPass, UV);
+    float4 finalColor = SAMPLE_SCREENSPACE_TEXTURE_LOD(GrabPass, float4(UV, 0, 0));
     finalColor.rgb = (1.0 - FrontFade) * finalColor.rgb + FrontFade * _DepthColor.rgb;
     //finalColor.rgb = lerp(finalColor.rgb,  _BaseColor.rgb, power*FrontFade);
     /*

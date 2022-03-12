@@ -163,7 +163,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 			float4 _BaseColor;
 			float4 _DepthColor;
 
-			sampler2D _TransparentGrabPass;
+			UNITY_DECLARE_SCREENSPACE_TEXTURE(_TransparentGrabPass);
 			float4 _TransparentGrabPass_TexelSize;
 		
 			#include "cginc/water_common.cginc"
@@ -305,7 +305,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 						smoothness,
 						_edgeFade,
 						_TransparentGrabPass_TexelSize.zw,
-						_TransparentGrabPass,
+						PASS_SCREENSPACE_TEXTURE(_TransparentGrabPass),
 						_NoiseTex,
 						_NoiseTex_TexelSize.zw,
 						albedo,
@@ -333,7 +333,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				if (offsetPos.x != 1.#INF)
 				{
 					BaseColor = lerp(float4(1, 1, 1, 1), _BaseColor, depthFade1);
-					refract = getRefractedColor(offsetPos, i.wPos, float3(i.tspace0.z, i.tspace1.z, tspace2.z), facing, _TransparentGrabPass);
+					refract = getRefractedColor(offsetPos, i.wPos, float3(i.tspace0.z, i.tspace1.z, tspace2.z), facing, PASS_SCREENSPACE_TEXTURE(_TransparentGrabPass));
 
 					float invCosIncident = 1 - dot(wNormal, rayDir);
 					float reflectance = _ReflectionStr + (1 - _ReflectionStr) * (saturate(invCosIncident * invCosIncident * invCosIncident * invCosIncident * invCosIncident));

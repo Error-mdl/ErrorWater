@@ -14,7 +14,8 @@ TessIn TessVert(VertIn v)
 
 	UNITY_SETUP_INSTANCE_ID(v);
 	UNITY_INITIALIZE_OUTPUT(TessIn, t);
-	
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(t);
+
 	t.vertex = v.vertex;
 	t.uv = v.uv;
 	t.uv1 = v.uv1;
@@ -24,7 +25,6 @@ TessIn TessVert(VertIn v)
 	t.tangent = v.tangent;
 	t.color = v.color;
 
-	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(t);
 	return t;
 }
 
@@ -41,7 +41,7 @@ float edgeFactor(float3 camP0, float3 camP1)
 	float3 edgeCenter = 0.5 * (camP0.xyz + camP1.xyz);
 	float3 edgeDist = length(edgeCenter);
 	float edgeLen = length( camP0 - camP1);
-	return 	clamp(_TessFac * distance(camP0, camP1) / edgeDist + 1e-6, 0 , _TessMax) * edgeLen;
+	return 	clamp(_TessFac * distance(camP0, camP1) / edgeDist + 1e-6, 0.001 , _TessMax) * edgeLen;
 }
 
 
@@ -98,8 +98,13 @@ struct TesFact
 };
 
 
-TesFact MPatchConstFunc(InputPatch<VertIn, 4> patch)
+TesFact MPatchConstFunc(InputPatch<TessIn, 4> patch)
 {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[0]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[1]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[2]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[3]); //---------------------------------------------------------------------
+
 	TesFact f;
 	float3 p1, p2, p3;
 
@@ -128,6 +133,7 @@ TesFact MPatchConstFunc(InputPatch<VertIn, 4> patch)
 TessIn MHullProgram(InputPatch<TessIn, 4> patch,
 	uint id : SV_OutputControlPointID)
 {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[id]); //---------------------------------------------------------------------
 	return patch[id];
 }
 
@@ -138,6 +144,10 @@ VertOut MDomainProgram(
 	OutputPatch<TessIn, 4> patch,
 	float2 barycentrCoords : SV_DomainLocation
 ) {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[0]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[1]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[2]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[3]); //---------------------------------------------------------------------
 	TessIn data;
 	/*
 	float2 uv01 = patch[1].uv - patch[0].uv;
@@ -146,24 +156,23 @@ VertOut MDomainProgram(
 	float3 vt03 = patch[3].vertex.xyz - patch[0].vertex.xyz;
 	float2 bx = GetWeights(uv01, uv03, float2(1,0));
 	float2 by = GetWeights(uv01, uv03, float2(0,1));
-	
+
 	float offsetX0 = length(bx.x * vt01 + bx.y * vt03);
 	float offsetY0 = length(by.x * vt01 + by.y * vt03);
-	
+
 	float2 uv12 = patch[2].uv - patch[1].uv;
 	float3 vt12 = patch[2].vertex.xyz - patch[1].vertex.xyz;
-	
+
 	bx = GetWeights(-uv01, uv02, float2(1,0));
 	by = GetWeights(-uv01, uv02, float2(0,1));
-	
+
 	float offsetX1 = length(bx.x * (-vt01) + bx.y * vt12);
 	float offsetY1 = length(by.x * (-vt01) + by.y * vt12);
 
-	
-	data.uvToObj.x = offsetX; 
-	data.uvToObj.y = offsetY; 
-*/	
-	
+	data.uvToObj.x = offsetX;
+	data.uvToObj.y = offsetY;
+*/
+
 	float3 bx = GetBarycentric(patch[1].uv, patch[0].uv, patch[3].uv, patch[0].uv + float2(1, 0));
 	float3 by = GetBarycentric(patch[1].uv, patch[0].uv, patch[3].uv, patch[0].uv + float2(0, 1));
 	float offsetX0 = length(bx.x * patch[1].vertex.xyz + bx.y * patch[0].vertex.xyz + bx.z * patch[3].vertex.xyz);
@@ -183,7 +192,7 @@ VertOut MDomainProgram(
 	by = GetBarycentric(patch[2].uv, patch[3].uv, patch[0].uv, patch[3].uv + float2(0, 1));
 	float offsetX3 = length(bx.x * patch[2].vertex.xyz + bx.y * patch[3].vertex.xyz + bx.z * patch[0].vertex.xyz);
 	float offsetY3 = length(by.x * patch[2].vertex.xyz + by.y * patch[3].vertex.xyz + by.z * patch[0].vertex.xyz);
-	
+
 	float xA = lerp(offsetX0, offsetX1, barycentrCoords.x);
 	float xB = lerp(offsetX3, offsetX2, barycentrCoords.x);
 	data.uvToObj.x = lerp(xA, xB, barycentrCoords.y);
@@ -191,9 +200,9 @@ VertOut MDomainProgram(
 	float yA = lerp(offsetY0, offsetY1, barycentrCoords.x);
 	float yB = lerp(offsetY3, offsetY2, barycentrCoords.x);
 	data.uvToObj.y = lerp(yA, yB, barycentrCoords.y);
-	
-	
-	
+
+
+
 	float3 vA = lerp(patch[0].vertex.xyz, patch[1].vertex.xyz, barycentrCoords.x);
 	float3 vB = lerp(patch[3].vertex.xyz, patch[2].vertex.xyz, barycentrCoords.x);
 	data.vertex = float4(lerp(vA, vB, barycentrCoords.y), 1);
@@ -221,9 +230,12 @@ VertOut MDomainProgram(
 	float4 cA = lerp(patch[0].color, patch[1].color, barycentrCoords.x);
 	float4 cB = lerp(patch[3].color, patch[2].color, barycentrCoords.x);
 	data.color = lerp(cA, cB, barycentrCoords.y);
-	
-	return vert(data);
+
+	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data); //---------------------------------------------------------------------
+
+	return vert((VertIn)data);
 }
+
 
 
 /* Triangle-based tesselation ---------------------------------------------- */
@@ -240,16 +252,18 @@ struct TesFact
 
 TesFact MPatchConstFunc(InputPatch<TessIn, 3> patch)
 {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[0]);  //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[1]);  //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[2]);  //---------------------------------------------------------------------
+
 	TesFact f;
 	float3 p0, p1, p2;
-	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[0])
-	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[1])
-	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[2])
+
 	p0 = mul(UNITY_MATRIX_MV, patch[0].vertex).xyz;
 	p1 = mul(UNITY_MATRIX_MV, patch[1].vertex).xyz;
 	p2 = mul(UNITY_MATRIX_MV, patch[2].vertex).xyz;
 
-	f.edge[0] = edgeFactor(p1, p2);	
+	f.edge[0] = edgeFactor(p1, p2);
 	f.edge[1] = edgeFactor(p2, p0);
 	f.edge[2] = edgeFactor(p0, p1);
 
@@ -265,21 +279,29 @@ TesFact MPatchConstFunc(InputPatch<TessIn, 3> patch)
 TessIn MHullProgram(InputPatch<TessIn, 3> patch,
 	uint id : SV_OutputControlPointID)
 {
-	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[id])
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[id]); //---------------------------------------------------------------------
 	return patch[id];
 }
 
-			float IsNan2_float(float In)
-			{
-				return (In < 0.0 || In > 0.0 || In == 0.0) ? 0 : 1;
-				
-			}
+
+float IsNan2_float(float In)
+{
+	return (In < 0.0 || In > 0.0 || In == 0.0) ? 0 : 1;
+	
+}
+
+
 [UNITY_domain("tri")]
 VertOut MDomainProgram(
 	TesFact factors,
 	OutputPatch<TessIn, 3> patch,
 	float3 barycentrCoords : SV_DomainLocation
 ) {
+
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[0]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[1]); //---------------------------------------------------------------------
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[2]); //---------------------------------------------------------------------
+
 	TessIn data;
 
 	#define MY_DOMAIN_PROGRAM_INTERPOLATE(fieldName) data.fieldName = \
@@ -318,8 +340,8 @@ VertOut MDomainProgram(
 
 	data.uvToObj.x = offsetX; 
 	data.uvToObj.y = offsetY;  
-	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data)
-	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(data)
+
+	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data) //---------------------------------------------------------------------
 
 	return vert((VertIn)data);
 
