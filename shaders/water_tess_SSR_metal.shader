@@ -1,4 +1,4 @@
-Shader "Error.mdl/Water/Water Tesselated SSR"
+Shader "Error.mdl/Water/Water Tesselated SSR Metallic"
 {
 	Properties
 	{
@@ -28,6 +28,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 		_BumpScale("Reflection Normal Scale", range(0,2)) = 1.0
 		_BumpScale2("Refraction Normal Scale", range(0,2)) = 1.0
 		_ReflectionStr("Cubemap reflection strength", range(0,1)) = 0.02
+		_Metallic("Metallic", range(0,1)) = 0
 
 		[Header(Fog and Color)]
 		_DepthFade("Edge Fade Factor", float) = 0.02
@@ -79,8 +80,6 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 
 			#pragma fragment frag
 			#pragma target 5.0
-
-			#define TESSELATION_VARIANT
 		
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -89,9 +88,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 			#include "../ForwardSSR/shaders/SSR.cginc"
 			#include "cginc/water_samplers.cginc"
 			
-			#include "cginc/water_structs.cginc"
 		
-			/*
 			struct VertIn
 			{
 				float4 vertex : POSITION;
@@ -116,7 +113,6 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				float4 wPos : TEXCOORD5;
 				float4 vColor : COLOR;
 			};
-			*/
 		
 			//sampler2D _MainTex;
 			//float4 _MainTex_ST;
@@ -162,13 +158,13 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 			float4 _Scroll;
 			float4 _BaseColor;
 			float4 _DepthColor;
+			float _Metallic;
 
 			sampler2D _TransparentGrabPass;
 			float4 _TransparentGrabPass_TexelSize;
 		
 			#include "cginc/water_common.cginc"
-			#include "cginc/water_vert.cginc"
-			/*
+
 			VertOut vert(VertIn v)
 			{
 				VertOut o;
@@ -201,7 +197,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				FBSampleLevel(rawOffset, _OffsetArray, sampler_OffsetArray, uvArray, _ArrayLen, _BumpArrayFR);
 #endif
 
-				v.vertex.xyz += (rawOffset.z - 0.5) * v.normal * _OffsetScaleV *v.color.r;
+				v.vertex.xyz += rawOffset.z * v.normal * _OffsetScaleV *v.color.r;
 				v.vertex.xyz -= (rawOffset.x * normalize(v.tangent.xyz) / _BumpArray_ST.x + rawOffset.y * normalize(bitangent) / _BumpArray_ST.y) * _OffsetScaleH * v.color.r;
 				v.uv -= rawOffset.xy * _OffsetScaleH / (_BumpArray_ST.xy * v.uvToObj) * v.color.r;
 
@@ -216,7 +212,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				o.vColor = v.color;
 				return o;
 			}
-			*/
+
 
 			#include "cginc/water_tesselation.cginc"
 		
@@ -321,6 +317,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 
 				float4 cubemap = getCubemapColor(i.wPos.xyz, rayDir.xyz, 1.0);
 				cubemap = lerp(cubemap, SSR, min(1,SSR.a*4.0));
+				cubemap.rgb = lerp(cubemap.rgb, cubemap.rgb*_BaseColor.rgb, _Metallic);
 				//cubemap.a = _ReflectionStr;
 				float depthFade1 = getDepthFade(i.wPos, float3(i.tspace0.z, i.tspace1.z, tspace2.z), facing) * i.vColor.g;
 				//cubemap.a *= depthFade1;
@@ -332,12 +329,13 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				float4 output;
 				if (offsetPos.x != 1.#INF)
 				{
+					
 					BaseColor = lerp(float4(1, 1, 1, 1), _BaseColor, depthFade1);
 					refract = getRefractedColor(offsetPos, i.wPos, float3(i.tspace0.z, i.tspace1.z, tspace2.z), facing, _TransparentGrabPass);
 
 					float invCosIncident = 1 - dot(wNormal, rayDir);
 					float reflectance = _ReflectionStr + (1 - _ReflectionStr) * (saturate(invCosIncident * invCosIncident * invCosIncident * invCosIncident * invCosIncident));
-
+					
 					output = lerp(BaseColor * refract, cubemap, reflectance * depthFade1);
 				}
 				else
@@ -347,8 +345,9 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 					output = cubemap;
 				}
 				//output = float4(frac(i.uv0.xy*10),0,1);
+				float4 output2 = output;
 				UNITY_APPLY_FOG(i.fogCoord, output);
-				return output;
+				return lerp(output2, output, depthFade1);
 			}
 			ENDCG
 		}

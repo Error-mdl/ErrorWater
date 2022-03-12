@@ -2,10 +2,9 @@ VertOut vert(VertIn v)
 {
 	VertOut o;
 
-
+	UNITY_INITIALIZE_OUTPUT(VertOut, o);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 	half3 wNormal = normalize(UnityObjectToWorldNormal(v.normal));
-
-
 
 	// Tangent info for calculating world-space normals from a normal map
 	float3 wTangent = UnityObjectToWorldDir(v.tangent.xyz);

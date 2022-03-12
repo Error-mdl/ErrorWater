@@ -10,6 +10,9 @@ float _TessMax;
  */
 VertIn TessVert(VertIn v)
 {
+	UNITY_SETUP_INSTANCE_ID(v);
+	//UNITY_INITIALIZE_OUTPUT(VertIn, v);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(v);
 	return v;
 }
 
@@ -227,7 +230,9 @@ TesFact MPatchConstFunc(InputPatch<VertIn, 3> patch)
 {
 	TesFact f;
 	float3 p0, p1, p2;
-
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[0])
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[1])
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[2])
 	p0 = mul(UNITY_MATRIX_MV, patch[0].vertex).xyz;
 	p1 = mul(UNITY_MATRIX_MV, patch[1].vertex).xyz;
 	p2 = mul(UNITY_MATRIX_MV, patch[2].vertex).xyz;
@@ -300,9 +305,9 @@ VertOut MDomainProgram(
 
 	data.uvToObj.x = offsetX; 
 	data.uvToObj.y = offsetY;  
-	
-	
-	
+	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data)
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(data)
+
 	return vert(data);
 }
 

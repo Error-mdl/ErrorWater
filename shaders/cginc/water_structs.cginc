@@ -13,6 +13,8 @@ struct VertIn
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
 	float4 color: COLOR;
+	UNITY_VERTEX_INPUT_INSTANCE_ID
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 struct VertOut
@@ -25,4 +27,6 @@ struct VertOut
 	UNITY_FOG_COORDS(4)
 	float4 wPos : TEXCOORD5;
 	float4 vColor : COLOR;
+	UNITY_VERTEX_INPUT_INSTANCE_ID
+	UNITY_VERTEX_OUTPUT_STEREO
 };

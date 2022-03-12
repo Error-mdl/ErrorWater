@@ -33,7 +33,7 @@ float getDepthDifference(float3 wPos, float3 offsetPos, float3 normal, float2 uv
     float depthDifference;
     UNITY_BRANCH if (facing > 0)
     {
-        float rawDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, float4(uvDepth, 0, 0));
+        float rawDepth = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uvDepth, 0, 0));
         float farDepth = Linear01Depth(rawDepth);
         float3 wRay = offsetPos - _WorldSpaceCameraPos;
         float wRayDepth = dot(wRay, -UNITY_MATRIX_I_V._m02_m12_m22);
