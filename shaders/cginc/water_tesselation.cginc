@@ -8,12 +8,24 @@ float _TessMax;
  * @param v VertIn struct containing the vertex data
  * @return The unchanged VertIn struct
  */
-VertIn TessVert(VertIn v)
+TessIn TessVert(VertIn v)
 {
+	TessIn t;
+
 	UNITY_SETUP_INSTANCE_ID(v);
-	//UNITY_INITIALIZE_OUTPUT(VertIn, v);
-	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(v);
-	return v;
+	UNITY_INITIALIZE_OUTPUT(TessIn, t);
+	
+	t.vertex = v.vertex;
+	t.uv = v.uv;
+	t.uv1 = v.uv1;
+	t.uv2 = v.uv2;
+	t.uvToObj = float2(0,0);
+	t.normal = v.normal;
+	t.tangent = v.tangent;
+	t.color = v.color;
+
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(t);
+	return t;
 }
 
 /* @brief Computes the tesselation factor for an edge from the length of the
@@ -29,7 +41,7 @@ float edgeFactor(float3 camP0, float3 camP1)
 	float3 edgeCenter = 0.5 * (camP0.xyz + camP1.xyz);
 	float3 edgeDist = length(edgeCenter);
 	float edgeLen = length( camP0 - camP1);
-	return 	clamp(_TessFac * distance(camP0, camP1) / edgeDist, 0 , _TessMax) * edgeLen;
+	return 	clamp(_TessFac * distance(camP0, camP1) / edgeDist + 1e-6, 0 , _TessMax) * edgeLen;
 }
 
 
@@ -113,7 +125,7 @@ TesFact MPatchConstFunc(InputPatch<VertIn, 4> patch)
 [UNITY_outputtopology("triangle_cw")]
 [UNITY_partitioning("fractional_even")]
 [UNITY_patchconstantfunc("MPatchConstFunc")]
-VertIn MHullProgram(InputPatch<VertIn, 4> patch,
+TessIn MHullProgram(InputPatch<TessIn, 4> patch,
 	uint id : SV_OutputControlPointID)
 {
 	return patch[id];
@@ -123,10 +135,10 @@ VertIn MHullProgram(InputPatch<VertIn, 4> patch,
 [UNITY_domain("quad")]
 VertOut MDomainProgram(
 	TesFact factors,
-	OutputPatch<VertIn, 4> patch,
+	OutputPatch<TessIn, 4> patch,
 	float2 barycentrCoords : SV_DomainLocation
 ) {
-	VertIn data;
+	TessIn data;
 	/*
 	float2 uv01 = patch[1].uv - patch[0].uv;
 	float2 uv03 = patch[3].uv - patch[0].uv;
@@ -226,7 +238,7 @@ struct TesFact
 
 
 
-TesFact MPatchConstFunc(InputPatch<VertIn, 3> patch)
+TesFact MPatchConstFunc(InputPatch<TessIn, 3> patch)
 {
 	TesFact f;
 	float3 p0, p1, p2;
@@ -250,9 +262,10 @@ TesFact MPatchConstFunc(InputPatch<VertIn, 3> patch)
 [UNITY_outputtopology("triangle_cw")]
 [UNITY_partitioning("fractional_even")]
 [UNITY_patchconstantfunc("MPatchConstFunc")]
-VertIn MHullProgram(InputPatch<VertIn, 3> patch,
+TessIn MHullProgram(InputPatch<TessIn, 3> patch,
 	uint id : SV_OutputControlPointID)
 {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(patch[id])
 	return patch[id];
 }
 
@@ -264,10 +277,10 @@ VertIn MHullProgram(InputPatch<VertIn, 3> patch,
 [UNITY_domain("tri")]
 VertOut MDomainProgram(
 	TesFact factors,
-	OutputPatch<VertIn, 3> patch,
+	OutputPatch<TessIn, 3> patch,
 	float3 barycentrCoords : SV_DomainLocation
 ) {
-	VertIn data;
+	TessIn data;
 
 	#define MY_DOMAIN_PROGRAM_INTERPOLATE(fieldName) data.fieldName = \
 		patch[0].fieldName * barycentrCoords.x + \
@@ -308,7 +321,8 @@ VertOut MDomainProgram(
 	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data)
 	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(data)
 
-	return vert(data);
+	return vert((VertIn)data);
+
 }
 
 #endif
