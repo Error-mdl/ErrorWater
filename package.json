@@ -1,6 +1,6 @@
 {
-  "name": "com.error.errorWater",
+  "name": "com.error.errorwater",
   "version": "1.0.0",
   "displayName": "Error Water",
-  "description": "An incomplete water shader",
+  "description": "An incomplete water shader"
 }
