@@ -2,6 +2,5 @@
   "name": "com.error.errorwater",
   "version": "1.0.0",
   "displayName": "Error Water",
-  "description": "An incomplete water shader",
-  "type": "library"
+  "description": "An incomplete water shader"
 }
