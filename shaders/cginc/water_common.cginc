@@ -34,7 +34,7 @@ float getDepthDifference(float3 wPos, float3 offsetPos, float3 normal, float2 uv
     float depthDifference;
     UNITY_BRANCH if (facing > 0)
     {
-        float rawDepth = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uvDepth, 0, 0));
+        float rawDepth = SAMPLE_SCREENSPACE_TEXTURE_LOD(_CameraDepthTexture, float4(uvDepth, 0, 0));
         float farDepth = Linear01Depth(rawDepth);
         float3 wRay = offsetPos - _WorldSpaceCameraPos;
         float wRayDepth = dot(wRay, -UNITY_MATRIX_I_V._m02_m12_m22);
@@ -120,7 +120,7 @@ float4 getRefractedUVs(float4 offsetPos, float4 wPos)
     return float4(UV, UV1);
 }
 
-float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float facing, PARAM_SCREENSPACE_TEXTURE(GrabPass))
+float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float facing, float minFog, PARAM_SCREENSPACE_TEXTURE(GrabPass))
 {
     float4 UVs = getRefractedUVs(offsetPos, wPos);
     float2 UV = UVs.xy;
@@ -132,9 +132,9 @@ float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float fac
         depthDiff = getDepthDifference(wPos.xyz, offsetPos.xyz, normal, UV1, facing);
         UV.y = UV1.y;
     }
-    float FrontFade = 1.0 - 1.0 / (exp(depthDiff * depthDiff * _fogDepth));
+    float FrontFade = saturate(1.0 - (1.0 - minFog) / (exp(depthDiff * _fogDepth)));
 #else
-    float FrontFade = 0.0;
+    float FrontFade = minFog;
 #endif
     //FrontFade = sqrt(FrontFade);
     float4 finalColor = SAMPLE_SCREENSPACE_TEXTURE_LOD(GrabPass, float4(UV, 0, 0));

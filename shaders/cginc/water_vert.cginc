@@ -1,9 +1,16 @@
-VertOut vert(VertIn v)
+VertOut vert(
+#ifdef TESSELATION_VARIANT
+	TessIn v
+#else
+	VertIn v
+#endif
+)
 {
 	VertOut o;
-
+	
 	UNITY_INITIALIZE_OUTPUT(VertOut, o);
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+	
 	half3 wNormal = normalize(UnityObjectToWorldNormal(v.normal));
 
 	// Tangent info for calculating world-space normals from a normal map

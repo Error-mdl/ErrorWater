@@ -41,7 +41,7 @@ float edgeFactor(float3 camP0, float3 camP1)
 	float3 edgeCenter = 0.5 * (camP0.xyz + camP1.xyz);
 	float3 edgeDist = length(edgeCenter);
 	float edgeLen = length( camP0 - camP1);
-	return 	clamp(_TessFac * distance(camP0, camP1) / edgeDist + 1e-6, 0.001 , _TessMax) * edgeLen;
+	return 	max(1e-35, clamp(_TessFac * distance(camP0, camP1) / edgeDist + 1e-6, 0.001 , _TessMax) * edgeLen);
 }
 
 
@@ -233,7 +233,7 @@ VertOut MDomainProgram(
 
 	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data); //---------------------------------------------------------------------
 
-	return vert((VertIn)data);
+	return vert(data);
 }
 
 
@@ -343,7 +343,7 @@ VertOut MDomainProgram(
 
 	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data) //---------------------------------------------------------------------
 
-	return vert((VertIn)data);
+	return vert(data);
 
 }
 
