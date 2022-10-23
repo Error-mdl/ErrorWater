@@ -7,8 +7,11 @@ VertOut vert(
 )
 {
 	VertOut o;
-	
+#ifndef TESSELATION_VARIANT
+	UNITY_SETUP_INSTANCE_ID(v);
+#endif
 	UNITY_INITIALIZE_OUTPUT(VertOut, o);
+	UNITY_TRANSFER_INSTANCE_ID(v, o);
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 	
 	half3 wNormal = normalize(UnityObjectToWorldNormal(v.normal));

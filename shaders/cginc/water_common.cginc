@@ -6,7 +6,7 @@
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-#include "../../ForwardSSR/shaders/ScreenspaceMacros.cginc"
+#include "Packages/com.error.birptourp/ShaderLibrary/DeclareDepthTexture.hlsl"
 
 /** @brief Returns the distance between a given point and the worldspace position calculated from the depth
  *         read from the depth texture at the given screen UVs.
@@ -34,7 +34,7 @@ float getDepthDifference(float3 wPos, float3 offsetPos, float3 normal, float2 uv
     float depthDifference;
     UNITY_BRANCH if (facing > 0)
     {
-        float rawDepth = SAMPLE_SCREENSPACE_TEXTURE_LOD(_CameraDepthTexture, float4(uvDepth, 0, 0));
+        float rawDepth = SAMPLE_TEXTURE2D_X_LOD(_CameraDepthTexture, sampler_CameraDepthTexture, uvDepth, 0);
         float farDepth = Linear01Depth(rawDepth);
         float3 wRay = offsetPos - _WorldSpaceCameraPos;
         float wRayDepth = dot(wRay, -UNITY_MATRIX_I_V._m02_m12_m22);
@@ -120,7 +120,7 @@ float4 getRefractedUVs(float4 offsetPos, float4 wPos)
     return float4(UV, UV1);
 }
 
-float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float facing, float minFog, PARAM_SCREENSPACE_TEXTURE(GrabPass))
+float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float facing, float minFog, PARAM_TEXTURE2D_X(GrabPass))
 {
     float4 UVs = getRefractedUVs(offsetPos, wPos);
     float2 UV = UVs.xy;
@@ -137,7 +137,7 @@ float4 getRefractedColor(float4 offsetPos, float4 wPos, float3 normal, float fac
     float FrontFade = minFog;
 #endif
     //FrontFade = sqrt(FrontFade);
-    float4 finalColor = SAMPLE_SCREENSPACE_TEXTURE_LOD(GrabPass, float4(UV, 0, 0));
+    float4 finalColor = SAMPLE_TEXTURE2D_X_LOD(GrabPass, samplerGrabPass, UV, 0);
     finalColor.rgb = (1.0 - FrontFade) * finalColor.rgb + FrontFade * _DepthColor.rgb;
     //finalColor.rgb = lerp(finalColor.rgb,  _BaseColor.rgb, power*FrontFade);
     /*

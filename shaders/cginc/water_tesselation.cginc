@@ -13,6 +13,7 @@ TessIn TessVert(VertIn v)
 	TessIn t;
 
 	UNITY_SETUP_INSTANCE_ID(v);
+	UNITY_TRANSFER_INSTANCE_ID(v, t);
 	UNITY_INITIALIZE_OUTPUT(TessIn, t);
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(t);
 
@@ -231,6 +232,7 @@ VertOut MDomainProgram(
 	float4 cB = lerp(patch[3].color, patch[2].color, barycentrCoords.x);
 	data.color = lerp(cA, cB, barycentrCoords.y);
 
+	UNITY_TRANSFER_INSTANCE_ID(patch[0], data);
 	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data); //---------------------------------------------------------------------
 
 	return vert(data);
@@ -340,7 +342,7 @@ VertOut MDomainProgram(
 
 	data.uvToObj.x = offsetX; 
 	data.uvToObj.y = offsetY;  
-
+	UNITY_TRANSFER_INSTANCE_ID(patch[0], data);
 	UNITY_TRANSFER_VERTEX_OUTPUT_STEREO(patch[0], data) //---------------------------------------------------------------------
 
 	return vert(data);

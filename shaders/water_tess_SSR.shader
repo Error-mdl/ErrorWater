@@ -170,7 +170,8 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 			float4 _DepthColor;
 			float _fogMin;
 
-			UNITY_DECLARE_SCREENSPACE_TEXTURE(_TransparentGrabPass);
+			TEXTURE2D_X(_TransparentGrabPass);
+			SAMPLER(sampler_TransparentGrabPass);
 			float4 _TransparentGrabPass_TexelSize;
 		
 			#include "cginc/water_common.cginc"
@@ -315,7 +316,8 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				//ssrData.GrabTextureSSR = _TransparentGrabPass;
 				ssrData.NoiseTex = _NoiseTex;
 				ssrData.NoiseTex_dim = _NoiseTex_TexelSize.zw;
-				SSR_STRUCT_PASS_SCREENSPACE_TEX(ssrData, GrabTextureSSR, _TransparentGrabPass)
+				ssrData.GrabTextureSSR = _TransparentGrabPass;
+				ssrData.samplerGrabTextureSSR = sampler_TransparentGrabPass;
 				
 				UNITY_BRANCH if (!IsInMirror())
 				{
@@ -345,7 +347,7 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 				{
 					BaseColor = lerp(float4(1, 1, 1, 1), _BaseColor, depthFade1);
 					//float fogMin = FdotR < 0 ? 1 : _fogMin;
-					refract = getRefractedColor(offsetPos, i.wPos, float3(i.tspace0.z, i.tspace1.z, tspace2.z), facing, _fogMin * depthFade1, PASS_SCREENSPACE_TEXTURE(_TransparentGrabPass));
+					refract = getRefractedColor(offsetPos, i.wPos, float3(i.tspace0.z, i.tspace1.z, tspace2.z), facing, _fogMin * depthFade1, INPUT_TEXTURE2D_X(_TransparentGrabPass));
 
 					float invCosIncident = 1 - dot(wNormal, rayDir);
 					float reflectance = _ReflectionStr + (1 - _ReflectionStr) * (saturate(invCosIncident * invCosIncident * invCosIncident * invCosIncident * invCosIncident));
@@ -363,7 +365,8 @@ Shader "Error.mdl/Water/Water Tesselated SSR"
 
 				//float4 spos = ComputeGrabScreenPos(mul(UNITY_MATRIX_VP, i.wPos));
 				//float2 uvDepth = spos.xy / spos.w;
-				//float rawDepth = SAMPLE_SCREENSPACE_TEXTURE_LOD(_CameraDepthTexture, float4(uvDepth, 0, 0));
+				//float rawDepth = SAMPLE_RAW_DEPTH_TEXTURE(_CameraDepthTexture, float4(uvDepth, 0, 0));
+				//output = rawDepth.rrrr;
 				return output;
 			}
 			ENDCG
